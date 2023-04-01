@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { ESPLoader, Transport } from 'esptool-js'
 
 let device = null
@@ -5,10 +6,13 @@ let transport
 let chip = null
 let esploader
 let file1 = null
-let connected = false
+let flashing = ref(false)
+let connected = ref(false)
+let progress = ref(0)
 
-const progress = (fileIndex, written, total) => {
-  console.log(`File: ${fileIndex} - ${written}/${total}`)
+const updateProgress = (fileIndex, written, total) => {
+  console.log(`Progress ${written}/${total}`)
+  progress.value = Math.round((100 * written) / total)
 }
 
 const connect = async () => {
@@ -19,15 +23,17 @@ const connect = async () => {
 
   try {
     esploader = new ESPLoader(transport, 115200)
-    connected = true
-
     chip = await esploader.main_fn()
+    connected.value = true
   } catch (e) {
     console.error(e)
   }
 
   console.log('Settings done for :' + chip)
+}
 
+const flash = async () => {
+  flashing.value = true
   await esploader.write_flash(
     [{
       address: 0x10000,
@@ -38,14 +44,14 @@ const connect = async () => {
     undefined,
     false,
     true,
-    progress
+    updateProgress
   );
-
-  if (transport) await transport.disconnect()
+  flashing.value = false
 }
 
 const disconnect = async () => {
   if (transport) await transport.disconnect()
+  connected.value = false
 }
 
 const loadFile = async (firmwareUrl) => {
@@ -63,4 +69,4 @@ const loadFile = async (firmwareUrl) => {
   reader.readAsBinaryString(file);
 }
 
-export { loadFile, connect, disconnect }
+export { connected, flashing, progress, loadFile, connect, flash, disconnect }
