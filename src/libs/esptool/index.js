@@ -1,6 +1,5 @@
 import { ESPLoader, Transport } from 'esptool-js'
 
-let fileUrl = '/firmware/firmware-latest.bin'
 let device = null
 let transport
 let chip = null
@@ -49,8 +48,12 @@ const disconnect = async () => {
   if (transport) await transport.disconnect()
 }
 
-const loadFile = async () => {
-  const file = await fetch(fileUrl).then(res => res.blob())
+const loadFile = async (firmwareUrl) => {
+  const file = await fetch(firmwareUrl, {
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
+  }).then(res => res.blob())
 
   if (!file) return;
 
