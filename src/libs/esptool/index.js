@@ -47,6 +47,7 @@ const flash = async () => {
     updateProgress
   );
   flashing.value = false
+  progress.value = 0
 }
 
 const disconnect = async () => {
