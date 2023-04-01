@@ -49,11 +49,7 @@ const disconnect = async () => {
 }
 
 const loadFile = async (firmwareUrl) => {
-  const file = await fetch(firmwareUrl, {
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    }
-  }).then(res => res.blob())
+  const file = await fetch(firmwareUrl).then(res => res.blob())
 
   if (!file) return;
 
