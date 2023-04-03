@@ -2,12 +2,20 @@
   "name": "esp32-setup",
   "version": "0.0.0",
   "private": true,
+  "main": "dist-electron/main/index.js",
+  "debug": {
+    "env": {
+      "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
+    }
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "electron:start": "electron . -w",
+    "electron:build": "electron-builder"
   },
   "dependencies": {
     "esptool-js": "^0.2.1",
@@ -18,9 +26,13 @@
     "@rushstack/eslint-patch": "^1.2.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.1.0",
+    "electron": "^23.2.1",
+    "electron-builder": "^23.6.0",
     "eslint": "^8.34.0",
     "eslint-plugin-vue": "^9.9.0",
     "prettier": "^2.8.4",
-    "vite": "^4.1.4"
+    "vite": "^4.1.4",
+    "vite-plugin-electron": "^0.11.1",
+    "vite-plugin-electron-renderer": "^0.13.14"
   }
 }
