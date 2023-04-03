@@ -55,7 +55,6 @@ jobs:
           tag_name: latest
           release_name: Release
           draft: true
-          prerelease: false
 
       - name: Upload Release Asset
         id: upload-release-asset 
