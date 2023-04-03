@@ -42,7 +42,7 @@ const indexHtml = join(process.env.DIST, 'index.html')
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'Main window',
+    title: 'ESP32 Setup',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
     webPreferences: {
       preload,
@@ -54,10 +54,12 @@ async function createWindow() {
     },
   })
 
+  win.webContents.openDevTools()
+
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
     // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
   }
@@ -68,11 +70,51 @@ async function createWindow() {
   })
 
   // Make all links open with the browser, not with the application
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https:')) shell.openExternal(url)
-    return { action: 'deny' }
-  })
+  // win.webContents.setWindowOpenHandler(({ url }) => {
+  //   if (url.startsWith('https:')) shell.openExternal(url)
+  //   return { action: 'deny' }
+  // })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+
+  win.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
+
+    //Add listeners to handle ports being added or removed before the callback for `select-serial-port`
+    //is called.
+    win.webContents.session.on('serial-port-added', (event, port) => {
+      console.log('serial-port-added FIRED WITH', port)
+      //Optionally update portList to add the new port
+    })
+  
+    win.webContents.session.on('serial-port-removed', (event, port) => {
+      console.log('serial-port-removed FIRED WITH', port)
+      //Optionally update portList to remove the port
+    })
+
+    event.preventDefault()
+    if (portList && portList.length > 0) {
+      console.log('devices list:', portList)
+      win?.webContents.send('main-process-message', portList)
+      callback(portList[0].portId)
+    } else {
+      callback('') //Could not find any matching devices
+    }
+  })
+
+  win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+    if (permission === 'serial' && details.securityOrigin === 'file:///') {
+      return true
+    }
+    
+    return false
+  })
+
+  win.webContents.session.setDevicePermissionHandler((details) => {
+    if (details.deviceType === 'serial' && details.origin === 'file://') {
+      return true
+    }
+    
+    return false
+  })
 }
 
 app.whenReady().then(createWindow)

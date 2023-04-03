@@ -29,7 +29,7 @@ onMounted(async () => {
 
 <template>
   <main>
-    ESP32 Firmware Uploader
+    ESP32 Firmware Uploader v2
     <p>Firmware: {{ firmwareUrl }}</p>
     <pre>{{ device }}</pre>
     <select v-model="device">
