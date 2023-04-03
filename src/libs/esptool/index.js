@@ -10,10 +10,38 @@ let flashing = ref(false)
 let connected = ref(false)
 let progress = ref(0)
 
+let espLoaderTerminal = {
+  clean() {
+    console.log('clean terminal')
+  },
+  writeLine(data) {
+    console.log('writeLine', data, '\n')
+  },
+  write(data) {
+    console.log('write', data)
+  }
+}
+
 const updateProgress = (fileIndex, written, total) => {
   console.log(`Progress ${written}/${total}`)
   progress.value = Math.round((100 * written) / total)
 }
+
+const listDevices = async () => {
+  if (!navigator.serial) {
+    throw new Error('Web Serial API not available')
+  }
+  
+  console.log('listDevices')
+  try {
+    const ports = await navigator.serial.getPorts()
+    return ports
+  } catch (error) {
+    console.error('Error listing devices:', error)
+    throw error
+  }
+}
+
 
 const connect = async () => {
   if (device === null) {
@@ -22,7 +50,7 @@ const connect = async () => {
   }
 
   try {
-    esploader = new ESPLoader(transport, 115200)
+    esploader = new ESPLoader(transport, 115200, espLoaderTerminal)
     chip = await esploader.main_fn()
     connected.value = true
   } catch (e) {
@@ -35,17 +63,19 @@ const connect = async () => {
 const flash = async () => {
   flashing.value = true
   await esploader.write_flash(
-    [{
-      address: 0x10000,
-      data: file1
-    }],
+    [
+      {
+        address: 0x10000,
+        data: file1
+      }
+    ],
     'keep',
     undefined,
     undefined,
     false,
     true,
     updateProgress
-  );
+  )
   flashing.value = false
   progress.value = 0
 }
@@ -56,18 +86,18 @@ const disconnect = async () => {
 }
 
 const loadFile = async (firmwareUrl) => {
-  const file = await fetch(firmwareUrl).then(res => res.blob())
+  const file = await fetch(firmwareUrl).then((res) => res.blob())
 
-  if (!file) return;
+  if (!file) return
 
-  var reader = new FileReader();
+  var reader = new FileReader()
 
   reader.onload = (e) => {
     console.log('onload file', e)
-    file1 = e.target.result;
-  };
+    file1 = e.target.result
+  }
 
-  reader.readAsBinaryString(file);
+  reader.readAsBinaryString(file)
 }
 
-export { connected, flashing, progress, loadFile, connect, flash, disconnect }
+export { connected, flashing, progress, loadFile, listDevices, connect, flash, disconnect }
