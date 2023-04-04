@@ -1,29 +1,30 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import {
+import { ref, watch, onMounted } from 'vue'
+import { useEsptool } from '@/libs/esptool'
+const {
+  chip,
+  devices,
+  device,
   connected,
   flashing,
   progress,
   loadFile,
-  listDevices,
+  fetchDevices,
   connect,
   flash,
   disconnect
-} from '@/libs/esptool'
+} = useEsptool()
 
 const firmwareUrl = ref(import.meta.env.VITE_FIRMWARE_URL)
-let devices = ref([])
-let device = ref({})
 
-const loadDevices = async () => {
-  devices.value = await listDevices()
-  console.log(devices.value)
-  devices.value = devices.value.map((d) => d.getInfo())
-}
+watch(
+  () => devices.value,
+  (val) => console.log('watch devices:', val)
+)
 
-onMounted(async () => {
+onMounted(() => {
   loadFile(firmwareUrl.value)
-  await loadDevices()
+  fetchDevices()
 })
 </script>
 
@@ -31,15 +32,19 @@ onMounted(async () => {
   <main>
     ESP32 Firmware Uploader v2
     <p>Firmware: {{ firmwareUrl }}</p>
-    <pre>{{ device }}</pre>
+    <pre>chip: {{ chip }}</pre>
+    <pre>devices: {{ devices }}</pre>
+    <pre>device: {{ device }}</pre>
     <select v-model="device">
-      <option v-for="(device, d) in devices" :key="d" :value="device">{{ device }}</option>
+      <option v-for="device in devices" :key="device.portId" :value="device">
+        {{ device.displayName }} ({{ device.portName }})
+      </option>
     </select>
     <p>Connected: {{ connected }}</p>
-    <button v-if="!connected" @click="connect">List Devices</button>
-    <button v-if="!connected" @click="connect">Connect Device</button>
-    <button v-else-if="!flashing" @click="disconnect">Disconnect Device</button>
-    <button v-if="connected && !flashing" @click="flash">Flash Device</button>
+    <button @click="fetchDevices">List Devices</button>
+    <button @click="connect">Connect Device</button>
+    <button @click="disconnect">Disconnect Device</button>
+    <button @click="flash">Flash Device</button>
     <p v-if="flashing">Flashing device: {{ progress }}%</p>
   </main>
 </template>
