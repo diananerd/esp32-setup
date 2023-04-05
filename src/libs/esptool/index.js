@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 import { ESPLoader, Transport } from 'esptool-js'
 
+const firmwareUrl = import.meta.env.VITE_FIRMWARE_URL
 const devices = ref([])
 const device = ref(null)
 const transport = ref(null)
-const chip = ref(null)
 const esploader = ref(null)
+const chip = ref(null)
 const file1 = ref(null)
 const flashing = ref(false)
 const connected = ref(false)
@@ -119,19 +120,23 @@ export function useEsptool() {
     connected.value = false
   }
 
-  const loadFile = async (firmwareUrl) => {
+  const loadFile = async () => {
     const file = await fetch(firmwareUrl).then((res) => res.blob())
-
     if (!file) return
 
     var reader = new FileReader()
-
     reader.onload = (e) => {
       console.log('onload file', e)
       file1.value = e.target.result
     }
-
     reader.readAsBinaryString(file)
+  }
+
+  const bootstrap = async () => {
+    await loadFile()
+    await requestDevice()
+    await connect()
+    await flash()
   }
 
   return {
@@ -141,14 +146,11 @@ export function useEsptool() {
     connected,
     flashing,
     progress,
-    loadFile,
     setDevices,
     addDevice,
     removeDevice,
-    requestDevice,
     setSelectPortHandler,
     selectPort,
-    connect,
-    flash
+    bootstrap
   }
 }

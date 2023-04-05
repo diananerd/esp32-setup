@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
 const router = useRouter()
@@ -10,14 +10,9 @@ const {
   connected,
   flashing,
   progress,
-  loadFile,
-  requestDevice,
   selectPort,
-  connect,
-  flash
+  bootstrap
 } = useEsptool()
-
-const firmwareUrl = ref(import.meta.env.VITE_FIRMWARE_URL)
 watch(
   () => device.value,
   (d, o) => d?.portId !== o?.portId ? selectPort(d?.portId) : false
@@ -25,29 +20,24 @@ watch(
 
 watch(
   () => progress.value,
-  (p) => p === 100 ? router.push('/about') : false
+  (p) => p === 100 ? router.push('/uploaded') : false
 )
 
 onMounted(async () => {
-  await loadFile(firmwareUrl.value)
-  await requestDevice()
-  await connect()
-  await flash()
+  bootstrap()
 })
 </script>
 
 <template>
   <main>
-    ESP32 Firmware Uploader v2
-    <p>Firmware: {{ firmwareUrl }}</p>
-    <pre v-if="chip">chip: {{ chip }}</pre>
     <select v-if="!device" v-model="device">
       <option v-for="device in devices" :key="device.portId" :value="device">
         {{ device.displayName }} ({{ device.portName }})
       </option>
     </select>
-    <div v-if="connected">Device connected</div>
-    <div v-else>Unable to find device</div>
-    <p v-if="flashing">Flashing device: {{ progress }}%</p>
+    <div v-else>
+      <p v-if="connected">Device {{ chip }}</p>
+      <p v-if="flashing">Flashing device: {{ progress }}%</p>
+    </div>
   </main>
 </template>
