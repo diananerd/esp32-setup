@@ -115,11 +115,6 @@ export function useEsptool() {
     progress.value = 0
   }
 
-  const disconnect = async () => {
-    if (transport.value) await transport.value.disconnect()
-    connected.value = false
-  }
-
   const loadFile = async () => {
     const file = await fetch(firmwareUrl).then((res) => res.blob())
     if (!file) return

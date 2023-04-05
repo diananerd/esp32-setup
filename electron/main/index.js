@@ -70,24 +70,22 @@ async function createWindow() {
   })
 
   // Make all links open with the browser, not with the application
-  // win.webContents.setWindowOpenHandler(({ url }) => {
-  //   if (url.startsWith('https:')) shell.openExternal(url)
-  //   return { action: 'deny' }
-  // })
-  // win.webContents.on('will-navigate', (event, url) => { }) #344
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:')) shell.openExternal(url)
+    return { action: 'deny' }
+  })
+  win.webContents.on('will-navigate', (event, url) => { }) // #344
 
   win.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
     //Add listeners to handle ports being added or removed before the callback for `select-serial-port`
     //is called.
 
     win.webContents.session.on('serial-port-added', (event, port) => {
-      console.log('serial-port-added FIRED WITH', port)
       //Optionally update portList to add the new port
       win?.webContents.send('serial-port-added', port)
     })
   
     win.webContents.session.on('serial-port-removed', (event, port) => {
-      console.log('serial-port-removed FIRED WITH', port)
       //Optionally update portList to remove the port
       win?.webContents.send('serial-port-removed', port)
     })
@@ -95,12 +93,10 @@ async function createWindow() {
     event.preventDefault()
     if (portList && portList.length > 0) {
       ipcMain.on('select-port', (_event, portId) => {
-        console.log('[main] select-port', portId)
         if (portId !== undefined) {
           callback(portId)
         }
       })
-      // callback(portList[0].portId)
       win?.webContents.send('select-serial-port', portList)
     } else {
       callback('') //Could not find any matching devices
