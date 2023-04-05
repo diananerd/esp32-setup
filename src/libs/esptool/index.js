@@ -11,6 +11,10 @@ const flashing = ref(false)
 const connected = ref(false)
 const progress = ref(0)
 
+let selectPortHandler = (portId) => {
+  console.error(`selectPortHandler is not a function, portId: ${portId}`)
+}
+
 const espLoaderTerminal = {
   clean() {
     console.log('clean terminal')
@@ -32,9 +36,6 @@ export function useEsptool() {
   const setDevices = async (ports) => {
     console.log('setDevices', ports)
     devices.value = ports
-    if (Array.isArray(ports) && ports.length) {
-      device.value = ports[0]
-    }
   }
 
   const addDevice = async (device) => {
@@ -51,36 +52,46 @@ export function useEsptool() {
     }
   }
 
-  const fetchDevices = async () => {
+  const requestDevice = async () => {
     if (!navigator.serial) {
       throw new Error('Web Serial API not available')
     }
-
-    console.log('fetchDevices')
     try {
-      await navigator.serial.requestPort({})
-      console.log('devices: ', devices.value)
+      console.log('fetchDevices')
+      device.value = await navigator.serial.requestPort({})
+      transport.value = new Transport(device.value)
     } catch (error) {
       console.error('Error fetching devices:', error)
       throw error
     }
   }
 
+  const setSelectPortHandler = (handler) => selectPortHandler = handler
+
+  const selectPort = async (portId) => {
+    selectPortHandler(portId)
+  }
+
   const connect = async () => {
-    if (device.value === null) {
-      device.value = await navigator.serial.requestPort({})
-      transport.value = new Transport(device.value)
-    }
-
-    try {
-      esploader.value = new ESPLoader(transport.value, 115200, espLoaderTerminal)
-      chip.value = await esploader.value.main_fn()
-      connected.value = true
-    } catch (e) {
-      console.error(e)
-    }
-
-    console.log('Settings done for :' + chip.value)
+    return new Promise(async (resolve, reject) => {
+      if (device.value === null) {
+        console.log('device is null')
+        reject()
+      }
+  
+      try {
+        connected.value = false
+        esploader.value = new ESPLoader(transport.value, 115200, espLoaderTerminal)
+        chip.value = await esploader.value.main_fn()
+        connected.value = true
+      } catch (e) {
+        console.error(e)
+        reject(e)
+      }
+  
+      console.log('Settings done for :' + chip.value)
+      resolve()
+    })
   }
 
   const flash = async () => {
@@ -134,9 +145,10 @@ export function useEsptool() {
     setDevices,
     addDevice,
     removeDevice,
-    fetchDevices,
+    requestDevice,
+    setSelectPortHandler,
+    selectPort,
     connect,
-    flash,
-    disconnect
+    flash
   }
 }

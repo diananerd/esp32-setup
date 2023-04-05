@@ -79,6 +79,7 @@ async function createWindow() {
   win.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
     //Add listeners to handle ports being added or removed before the callback for `select-serial-port`
     //is called.
+
     win.webContents.session.on('serial-port-added', (event, port) => {
       console.log('serial-port-added FIRED WITH', port)
       //Optionally update portList to add the new port
@@ -93,8 +94,14 @@ async function createWindow() {
 
     event.preventDefault()
     if (portList && portList.length > 0) {
+      ipcMain.on('select-port', (_event, portId) => {
+        console.log('[main] select-port', portId)
+        if (portId !== undefined) {
+          callback(portId)
+        }
+      })
+      // callback(portList[0].portId)
       win?.webContents.send('select-serial-port', portList)
-      callback(portList[0].portId)
     } else {
       callback('') //Could not find any matching devices
     }
