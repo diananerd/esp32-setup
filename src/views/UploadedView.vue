@@ -1,6 +1,15 @@
+<script setup>
+import { useEsptool } from '@/libs/esptool'
+const { serial, reset } = useEsptool()
+</script>
+
 <template>
   <div>
     <p>Firmware uploaded!</p>
     <a href="https://platzi.com/esp32" target="_blank">Go to panel</a>
+    <pre>
+      {{ serial }}
+    </pre>
+    <button @click="reset">Reset</button>
   </div>
 </template>

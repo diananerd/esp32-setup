@@ -11,6 +11,8 @@ const file1 = ref(null)
 const flashing = ref(false)
 const connected = ref(false)
 const progress = ref(0)
+const enableReadSerial = ref(true)
+const serial = ref('')
 
 let selectPortHandler = (portId) => {
   console.error(`selectPortHandler is not a function, portId: ${portId}`)
@@ -79,7 +81,7 @@ export function useEsptool() {
         console.log('device is null')
         reject()
       }
-  
+
       try {
         connected.value = false
         esploader.value = new ESPLoader(transport.value, 115200, espLoaderTerminal)
@@ -89,7 +91,7 @@ export function useEsptool() {
         console.error(e)
         reject(e)
       }
-  
+
       console.log('Settings done for :' + chip.value)
       resolve()
     })
@@ -115,7 +117,40 @@ export function useEsptool() {
     progress.value = 0
   }
 
+  const reset = async () => {
+    console.log('reset')
+    await esploader.value.hard_reset()
+  }
+
+  const cleanSerial = () => {
+    serial.value = ''
+  }
+
+  const readSerial = async () => {
+    console.log('readSerial')
+    let buff = new Uint8Array()
+    while (enableReadSerial.value) {
+      let buf = await transport.value.rawRead();
+      if (typeof buf !== 'undefined') {
+        let tmp = new Uint8Array(buff.byteLength + buf.byteLength);
+        tmp.set(new Uint8Array(buff), 0);
+        tmp.set(new Uint8Array(buf), buff.byteLength);
+        buff = tmp
+        serial.value = Buffer.from(buff).toString()
+      } else {
+        break;
+      }
+    }
+  }
+
+  const writeSerial = async (msg) => {
+    console.log('writeSerial', msg)
+    const message = new Uint8Array(Buffer.from(msg))
+    await transport.value.write(message)
+  }
+
   const loadFile = async () => {
+    console.log('loadFile', firmwareUrl)
     const file = await fetch(firmwareUrl).then((res) => res.blob())
     if (!file) return
 
@@ -131,7 +166,6 @@ export function useEsptool() {
     await loadFile()
     await requestDevice()
     await connect()
-    await flash()
   }
 
   return {
@@ -141,11 +175,17 @@ export function useEsptool() {
     connected,
     flashing,
     progress,
+    serial,
     setDevices,
     addDevice,
     removeDevice,
     setSelectPortHandler,
     selectPort,
-    bootstrap
+    cleanSerial,
+    bootstrap,
+    flash,
+    reset,
+    readSerial,
+    writeSerial
   }
 }
