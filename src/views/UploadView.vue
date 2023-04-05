@@ -19,10 +19,10 @@ const {
   writeSerial
 } = useEsptool()
 
-const input = ref('help\nnvs_set x i32 -v 24\nnvs_get x i32\nnvs_get x str')
+const input = ref('')
 
 const send = () => {
-  writeSerial(input.value)
+  writeSerial(`${input.value}\n`)
 }
 
 watch(
@@ -56,8 +56,10 @@ onMounted(async () => {
       <pre>
         {{ serial }}
       </pre>
-      <textarea v-model="input" cols="30" rows="10"></textarea>
-      <button @click="send">Send help</button>
+      <form @submit.prevent="send">
+        <input type="text" v-model="input" placeholder="Command" />
+        <button>Send</button>
+      </form>
     </div>
   </main>
 </template>
