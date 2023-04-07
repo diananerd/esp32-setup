@@ -2,6 +2,10 @@ import { ipcRenderer } from 'electron'
 import { useEsptool } from '../esptool'
 const esptool = useEsptool()
 
+export const exit = () => {
+  ipcRenderer.send('exit')
+}
+
 esptool.setSelectPortHandler((portId) => {
   ipcRenderer.send('select-port', portId)
 })

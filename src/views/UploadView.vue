@@ -23,6 +23,7 @@ const input = ref('')
 
 const send = () => {
   writeSerial(`${input.value}\n`)
+  input.value = ''
 }
 
 watch(

@@ -29,6 +29,11 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
+ipcMain.on('exit', () => {
+  app.quit()
+  process.exit(0)
+})
+
 // Remove electron security warnings
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
@@ -53,6 +58,8 @@ async function createWindow() {
       contextIsolation: false,
     },
   })
+
+  win.setMenu(null)
 
   win.webContents.openDevTools()
 
