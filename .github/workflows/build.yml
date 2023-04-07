@@ -45,8 +45,16 @@ jobs:
 
       - name: Compress build
         run: |
-          rm -rf ./node_modules
-          zip -r -q ./release.zip ./release
+          if [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
+            rm -rf ./node_modules
+            zip -r -q ./release.zip ./release
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            rm -rf ./node_modules
+            7z a -r release.zip release
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
         shell: bash
 
       - name: Create Release
