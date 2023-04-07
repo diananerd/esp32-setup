@@ -43,8 +43,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compress release
-        run: 7z -r -q ./release.zip ./release
+      - name: Compress build
+        run: |
+          if [[] "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
+            zip -r -q ./release.zip ./release
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            7z ./release.zip ./release
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+        shell: bash
 
       - name: Create Release
         id: create_release
