@@ -29,11 +29,6 @@ if (!app.requestSingleInstanceLock()) {
   process.exit(0)
 }
 
-ipcMain.on('exit', () => {
-  app.quit()
-  process.exit(0)
-})
-
 // Remove electron security warnings
 // This warning only shows in development mode
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
@@ -61,14 +56,13 @@ async function createWindow() {
 
   win.setMenu(null)
 
-  win.webContents.openDevTools()
-
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
     // Open devTool if the app is not packaged
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
+    win.webContents.openDevTools()
   }
 
   // Test actively push message to the Electron-Renderer
@@ -86,6 +80,7 @@ async function createWindow() {
   win.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
     //Add listeners to handle ports being added or removed before the callback for `select-serial-port`
     //is called.
+    console.log('[main] select-serial-port')
 
     win.webContents.session.on('serial-port-added', (event, port) => {
       //Optionally update portList to add the new port
@@ -100,10 +95,12 @@ async function createWindow() {
     event.preventDefault()
     if (portList && portList.length > 0) {
       ipcMain.on('select-port', (_event, portId) => {
+        console.log('ipcMain select-port', portId)
         if (portId !== undefined) {
           callback(portId)
         }
       })
+      console.log('[main] send select-serial-port', portList)
       win?.webContents.send('select-serial-port', portList)
     } else {
       callback('') //Could not find any matching devices
@@ -163,7 +160,13 @@ ipcMain.handle('open-win', (_, arg) => {
 
   if (process.env.VITE_DEV_SERVER_URL) {
     childWindow.loadURL(`${url}#${arg}`)
+    // childWindow.loadFile(indexHtml, { hash: arg })
   } else {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
+})
+
+ipcMain.on('exit', () => {
+  app.quit()
+  process.exit(0)
 })

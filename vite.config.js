@@ -27,7 +27,7 @@ export default defineConfig(({ command }) => {
           vite: {
             build: {
               sourcemap,
-              minify: true, // isBuild,
+              minify: isBuild,
               outDir: 'dist-electron/main',
               rollupOptions: {
                 external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
@@ -45,7 +45,7 @@ export default defineConfig(({ command }) => {
           vite: {
             build: {
               sourcemap: sourcemap ? 'inline' : undefined, // #332
-              minify: true, // isBuild,
+              minify: isBuild,
               outDir: 'dist-electron/preload',
               rollupOptions: {
                 external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
@@ -67,7 +67,7 @@ export default defineConfig(({ command }) => {
     clearScreen: false,
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       }
     }
   }
