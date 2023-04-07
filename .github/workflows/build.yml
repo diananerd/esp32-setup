@@ -16,6 +16,7 @@ on:
 
 jobs:
   build:
+    name: Build and publish release
     runs-on: ${{ matrix.os }}
     permissions: write-all
 
