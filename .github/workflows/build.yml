@@ -44,7 +44,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Compress release
-        run: zip -r -q ./release.zip ./release
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -r -q ./release.zip ./release
 
       - name: Create Release
         id: create_release
