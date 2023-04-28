@@ -1,0 +1,3 @@
+<template>
+    Connect Account
+</template>

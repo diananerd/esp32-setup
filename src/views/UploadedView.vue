@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
 const { serial, reset } = useEsptool()
 </script>
@@ -11,5 +12,7 @@ const { serial, reset } = useEsptool()
       {{ serial }}
     </pre>
     <button @click="reset">Reset</button>
+    <RouterLink to="/upload">Upload</RouterLink>
+    <RouterLink to="/setup">Setup</RouterLink>
   </div>
 </template>
