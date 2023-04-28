@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
 const router = useRouter()
 const {
@@ -43,6 +43,7 @@ onMounted(async () => {
 
 <template>
   <main>
+    <RouterLink to="/select">Select</RouterLink>
     <select v-if="!device" v-model="device">
       <option v-for="device in devices" :key="device.portId" :value="device">
         {{ device.displayName }} ({{ device.portName }})

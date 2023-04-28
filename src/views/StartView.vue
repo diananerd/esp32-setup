@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <div>
-    <p>Start uploading</p>
-    <RouterLink to="/upload">Start</RouterLink>
+    <p>Firmware Updater</p>
+    <RouterLink to="/select-device">Select device</RouterLink>
   </div>
 </template>
