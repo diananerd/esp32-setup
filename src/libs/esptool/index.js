@@ -150,8 +150,11 @@ export function useEsptool() {
   }
 
   const loadFile = async () => {
-    console.log('loadFile', firmwareUrl)
-    const file = await fetch(firmwareUrl).then((res) => res.blob())
+    const firmwareVersion = await fetch(`${firmwareUrl}/version.txt`).then((res) => res.text())
+    console.log('firmwareVersion: ', firmwareVersion)
+    const firmwarePath = `${firmwareUrl}/${firmwareVersion}/ground-station.bin`
+    console.log('loadFile', firmwarePath)
+    const file = await fetch(firmwarePath).then((res) => res.blob())
     if (!file) return
 
     var reader = new FileReader()
