@@ -1,6 +1,6 @@
 <template>
     <h2>Actualizar firmware</h2>
-    <p>Por favor, no desconecte el dispositivo.</p>
+    <p>Por favor, no desconectes el dispositivo.</p>
     <div v-if="flashing" class="flex">
       <img class="icon" src="@/assets/alert.svg" alt="alert" />
       <div class="progress">
