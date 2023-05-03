@@ -4,12 +4,13 @@
     <div class="flex">
         <img class="icon" src="@/assets/fail.svg" alt="fail" />
     </div>
-    <RouterLink to="/select-action">Volver al inicio</RouterLink>
+    <button class="btn" @click="exit">Terminar</button>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { exit } from '@/libs/electron'
 
 const route = useRoute()
 const title = ref('')
