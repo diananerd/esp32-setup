@@ -159,3 +159,16 @@ option {
   background-color: black;
   border-radius: 100px;
 }
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: 6s linear infinite rotating;
+}
