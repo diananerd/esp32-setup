@@ -34,6 +34,11 @@ const router = createRouter({
       component: () => import('../views/SetupConnectionView.vue')
     },
     {
+      path: '/connection-success',
+      name: 'connection-success',
+      component: () => import('../views/ConnectionSuccessView.vue')
+    },
+    {
       path: '/connect-account',
       name: 'connect-account',
       component: () => import('../views/ConnectAccountView.vue')

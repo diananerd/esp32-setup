@@ -1,12 +1,19 @@
 <template>
-    Select Device
-    <div v-if="!device">
-        <button v-for="device in devices" :key="device.portId" @click="selectPort(device.portId)">
-            {{ device.displayName }} ({{ device.portName }}) <span v-if="device.vendorId === '6790'">✨</span>
+    <h2>Seleccionar dispositivo</h2>
+    <p>Selecciona el puerto USB de tu estación terrestre.</p>
+    <div class="flex" v-if="!device">
+        <button
+            v-for="device in devices"
+            :key="device.portId"
+            @click="selectPort(device.portId)"
+        >
+            {{ device.displayName }} ({{ device.portName }})
+            <span v-if="device.vendorId === '6790'">✨</span>
         </button>
     </div>
-    <div v-else>
-        Connecting to device...
+    <div class="flex" v-else>
+        <img class="loader" src="@/assets/loading.svg" alt="loading" />
+        <p class="status">Conectando dispositivo</p>
     </div>
 </template>
 
@@ -20,7 +27,8 @@ const {
   devices,
   device,
   selectPort,
-  bootstrap,
+  requestDevice,
+  connect
 } = useEsptool()
 
 watch(
@@ -28,9 +36,8 @@ watch(
     (c) => c !== '' ? router.push('/select-action') : false
 )
 
-onMounted(() => {
-    bootstrap()
+onMounted(async () => {
+    await requestDevice()
+    await connect()
 })
 </script>
-
-<style scoped></style>
