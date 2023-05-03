@@ -27,7 +27,8 @@ const {
   devices,
   device,
   selectPort,
-  bootstrap,
+  requestDevice,
+  connect
 } = useEsptool()
 
 watch(
@@ -35,9 +36,8 @@ watch(
     (c) => c !== '' ? router.push('/select-action') : false
 )
 
-onMounted(() => {
-    bootstrap()
+onMounted(async () => {
+    await requestDevice()
+    await connect()
 })
 </script>
-
-<style scoped></style>

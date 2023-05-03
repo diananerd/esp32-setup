@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { ESPLoader, Transport } from 'esptool-js'
 
 const firmwareUrl = import.meta.env.VITE_FIRMWARE_URL
+const firmwareVersion = ref('')
 const devices = ref([])
 const device = ref(null)
 const transport = ref(null)
@@ -150,9 +151,9 @@ export function useEsptool() {
   }
 
   const loadFile = async () => {
-    const firmwareVersion = await fetch(`${firmwareUrl}/version.txt`).then((res) => res.text())
-    console.log('firmwareVersion: ', firmwareVersion)
-    const firmwarePath = `${firmwareUrl}/${firmwareVersion}/ground-station.bin`
+    firmwareVersion.value = await fetch(`${firmwareUrl}/version.txt`).then((res) => res.text())
+    console.log('firmwareVersion: ', firmwareVersion.value)
+    const firmwarePath = `${firmwareUrl}/${firmwareVersion.value}/ground-station.bin`
     console.log('loadFile', firmwarePath)
     const file = await fetch(firmwarePath).then((res) => res.blob())
     if (!file) return
@@ -165,12 +166,6 @@ export function useEsptool() {
     reader.readAsBinaryString(file)
   }
 
-  const bootstrap = async () => {
-    await loadFile()
-    await requestDevice()
-    await connect()
-  }
-
   return {
     chip,
     devices,
@@ -179,13 +174,16 @@ export function useEsptool() {
     flashing,
     progress,
     serial,
+    firmwareVersion,
     setDevices,
     addDevice,
     removeDevice,
     setSelectPortHandler,
     selectPort,
     cleanSerial,
-    bootstrap,
+    loadFile,
+    requestDevice,
+    connect,
     flash,
     reset,
     readSerial,

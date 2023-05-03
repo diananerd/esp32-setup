@@ -1,7 +1,6 @@
 *,
 *::before,
 *::after {
-  cursor: pointer;
   user-select: none;
   box-sizing: border-box;
   margin: 0;
@@ -141,4 +140,16 @@ option {
   background-color: black;
   border-radius: 100px;
   animation: 2.5s ease-in-out infinite blink;
+}
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.75rem;
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  color: white;
+  background-color: black;
+  border-radius: 100px;
 }
