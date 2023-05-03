@@ -1,7 +1,11 @@
 <template>
-    Firmware Uploaded
-    <RouterLink to="/setup-connection">Setup Connection</RouterLink>
-</template>
+    <h2>Firmware actualizado</h2>
+    <p>Se actualizó el firmware correctamente, ahora es necesario configurar la conexión a internet del dispositivo.</p>
+    <div class="flex">
+        <img class="icon" src="@/assets/success.svg" alt="success" />
+        <RouterLink class="btn" to="/setup-connection">Configurar conexión</RouterLink>
+    </div>
+    </template>
 
 <script setup>
 import { RouterLink } from 'vue-router'

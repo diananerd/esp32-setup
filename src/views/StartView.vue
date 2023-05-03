@@ -4,7 +4,8 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <div>
-    <p>Firmware Updater</p>
-    <RouterLink to="/select-device">Select device</RouterLink>
+    <h2>Firmware Updater</h2>
+    <p>Haz click en comenzar para iniciar el proceso de instalación del firmware.</p>
+    <RouterLink class="btn" to="/select-device">Comenzar</RouterLink>
   </div>
 </template>

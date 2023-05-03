@@ -1,23 +1,32 @@
 <template>
-    Setup Connection
-    <div v-if="!connected">
-        Device not connected
+    <h2>Configurar conexión</h2>
+    <p>Selecciona una red e ingresa la contraseña para conectar tu estación terrestre a internet.</p>
+    <div class="flex" v-if="!connected">
+        <img class="icon" src="@/assets/fail.svg" alt="fail" />
+        <p class="status">Dispositivo no conectado</p>
     </div>
-    <form @submit.prevent="connect" v-else-if="!connecting">
+    <form class="flex" @submit.prevent="connect" v-else-if="!connecting">
         <select v-if="networks.length" v-model="network">
             <option v-for="n in networks" :key="n" :value="n">
                 {{ n }}
             </option>
         </select>
-        <div v-else>
-            Loading networks...
+        <div class="flex" v-else>
+            <img class="loader" src="@/assets/loading.svg" alt="loading" />
+            <p class="status">Buscando redes</p>
         </div>
-        <input v-if="network" :type="showPass ? 'text' : 'password'" v-model="password" />
-        <input v-if="network" v-model="showPass" type="checkbox" />
-        <button v-if="network">Connect</button>
+        <div class="flex" v-if="network">
+            <input :type="showPass ? 'text' : 'password'" v-model="password" />
+            <label>
+                <input v-model="showPass" type="checkbox" />
+                <span>Mostrar contraseña</span>
+            </label>
+            <button>Conectar</button>
+        </div>
     </form>
-    <div v-else>
-        Connecting...
+    <div class="flex" v-else>
+        <img class="loader" src="@/assets/loading.svg" alt="loading" />
+        <p class="status">Conectando a la red&nbsp;<span class="underline">{{ network }}</span></p>
     </div>
 </template>
 
