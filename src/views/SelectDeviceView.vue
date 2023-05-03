@@ -1,7 +1,7 @@
 <template>
-    <h2>Seleccionar dispositivo</h2>
-    <p>Selecciona el puerto USB de tu estación terrestre.</p>
     <div class="flex" v-if="!device">
+        <h2>Seleccionar dispositivo</h2>
+        <p>Selecciona el puerto USB de tu estación terrestre.</p>
         <button
             v-for="device in devices"
             :key="device.portId"
