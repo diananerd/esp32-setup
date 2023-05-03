@@ -44,20 +44,10 @@ const router = createRouter({
       component: () => import('../views/ConnectAccountView.vue')
     },
     {
-      path: '/upload',
-      name: 'upload',
-      component: () => import('../views/UploadView.vue')
+      path: '/error',
+      name: 'error',
+      component: () => import('../views/ErrorView.vue')
     },
-    {
-      path: '/uploaded',
-      name: 'uploaded',
-      component: () => import('../views/UploadedView.vue')
-    },
-    {
-      path: '/setup',
-      name: 'setup',
-      component: () => import('../views/SetupView.vue')
-    }
   ]
 })
 

@@ -45,6 +45,6 @@ watch(
 )
 
 onMounted(() => {
-    flash()
+  flash()
 })
 </script>

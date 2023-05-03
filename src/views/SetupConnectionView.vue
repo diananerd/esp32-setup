@@ -34,7 +34,17 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
+
 const router = useRouter()
+
+const toError = (title, description) => router.push({
+  name: 'error',
+  query: {
+    title,
+    description
+  }
+})
+
 const {
   serial,
   connected,
@@ -47,6 +57,11 @@ const prevSerial = ref('')
 const lastSerial = ref('')
 const showPass = ref(null)
 const connecting = ref(false)
+const connectionAttempts = ref(0)
+const connectionAttemptsLimit = 5
+const elapsedTime = ref(0)
+const waitConnectionTime = 2500
+const waitConnectionLimit = 15000
 
 const network = ref('')
 const password = ref('')
@@ -64,6 +79,12 @@ const connection = computed(() => {
 })
 
 const fetchNetworks = () => {
+    connectionAttempts.value++
+    console.log('connection attempts', connectionAttempts.value)
+    if (connectionAttempts.value >= connectionAttemptsLimit) {
+        console.log('connection attempts error')
+        return toError('Error de conexión', 'No se encontraron redes disponibles')
+    }
     lastSerial.value = serial.value.replace(prevSerial.value, '')
     prevSerial.value = serial.value
     writeSerial('networks\n')
@@ -76,7 +97,13 @@ const waitConnection = () => {
     lastSerial.value = serial.value.replace(prevSerial.value, '')
     prevSerial.value = serial.value
     if (!connection.value) {
-        setTimeout(waitConnection, 2500)
+        elapsedTime.value += waitConnectionTime
+        console.log('elapsed time', elapsedTime.value)
+        if (elapsedTime.value >= waitConnectionLimit) {
+            console.log('elapsed time limit error')
+            return toError('Error de conexión', 'No se pudo conectar a la red')
+        }
+        setTimeout(waitConnection, waitConnectionTime)
     } else {
         connecting.value = false
         router.push('/connection-success')
@@ -93,5 +120,7 @@ onMounted(() => {
     readSerial()
     reset()
     fetchNetworks()
+    connectionAttempts.value = 0
+    elapsedTime.value = 0
 })
 </script>
