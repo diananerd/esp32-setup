@@ -117,10 +117,10 @@ const connect = () => {
 }
 
 onMounted(() => {
+    connectionAttempts.value = 0
+    elapsedTime.value = 0
     readSerial()
     reset()
     fetchNetworks()
-    connectionAttempts.value = 0
-    elapsedTime.value = 0
 })
 </script>
