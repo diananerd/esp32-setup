@@ -1,9 +1,15 @@
 <template>
-    <h2>Seleccionar dispositivo</h2>
-    <p>Selecciona el puerto USB de tu estación terrestre.</p>
     <div class="flex" v-if="!device">
+        <div class="flex" v-if="!devicesFiltered.length">
+            <img class="icon rotate" src="@/assets/sync.svg" alt="sync" />
+            <p class="badge">Buscando dispositivos compatibles</p>
+        </div>
+        <div v-else>
+            <h2>Seleccionar dispositivo</h2>
+            <p>Selecciona el puerto USB de tu estación terrestre.</p>
+        </div>
         <button
-            v-for="device in devices"
+            v-for="device in devicesFiltered"
             :key="device.portId"
             @click="selectPort(device.portId)"
         >
@@ -18,7 +24,7 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
 const router = useRouter()
@@ -30,6 +36,10 @@ const {
   requestDevice,
   connect
 } = useEsptool()
+
+const devicesFiltered = computed(() => {
+    return devices.value?.filter((device) => device?.vendorId === '6790')
+})
 
 watch(
     () => chip.value,

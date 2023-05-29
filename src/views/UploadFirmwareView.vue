@@ -1,6 +1,6 @@
 <template>
     <h2>Actualizar firmware</h2>
-    <p>Por favor, no desconecte el dispositivo.</p>
+    <p>Por favor, no desconectes el dispositivo.</p>
     <div v-if="flashing" class="flex">
       <img class="icon" src="@/assets/alert.svg" alt="alert" />
       <div class="progress">
@@ -32,7 +32,17 @@
 import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEsptool } from '@/libs/esptool'
+
 const router = useRouter()
+
+const toError = (title, description) => router.push({
+  name: 'error',
+  query: {
+    title,
+    description
+  }
+})
+
 const {
   flashing,
   progress,
@@ -44,7 +54,11 @@ watch(
   (p) => p === 100 ? router.push('/firmware-uploaded') : false
 )
 
-onMounted(() => {
-    flash()
+onMounted(async () => {
+  try {
+    await flash()
+  } catch (e) {
+    toError('Error de conexión', 'El dispositivo se desconectó inesperadamente')
+  }
 })
 </script>

@@ -15,10 +15,13 @@ onMounted(() => {
 
 <template>
   <div>
-    <h2>Firmware Updater</h2>
-    <p>Haz click en comenzar para iniciar el proceso de instalación del firmware.</p>
-    <RouterLink class="btn" to="/select-device">Comenzar</RouterLink>
     <div class="flex">
+      <img class="logo" src="@/assets/platzi.svg" alt="platzi" />
+    </div>
+    <h2>Platzi Ground Station</h2>
+    <p>Haz click en comenzar para iniciar el proceso de instalación del firmware.</p>
+    <div class="flex">
+      <RouterLink class="btn" to="/select-device">Comenzar</RouterLink>
       <p class="badge">Firmware version v{{ firmwareVersion }}</p>
     </div>
   </div>
