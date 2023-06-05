@@ -39,7 +39,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.7
 
       - name: Show Version
-        run: echo "Build and release version " ${{ env.GitVersion_SemVer }}
+        run: echo "Build and release version > " ${{ env.GitVersion_SemVer }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
