@@ -90,9 +90,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-bucket: ${{ secrets.AWS_BUCKET }}
-          file-path: ${{ matrix.os }}.zip
+          file-path: ./release.zip
           bucket-root: /setup
-          destination-dir: ${{ env.GitVersion_SemVer }}
+          destination-dir: ${{ env.GitVersion_SemVer }}/${{ matrix.os }}
 
       - name: Create version file
         run: echo  "${{ env.GitVersion_SemVer }}" > version.txt
