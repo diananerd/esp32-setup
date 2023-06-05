@@ -30,6 +30,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Unshallow repo
+        run: git fetch --unshallow --all
+
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.7
         with:
