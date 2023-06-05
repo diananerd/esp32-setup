@@ -30,6 +30,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0.9.7
+
+      - name: Show Version
+        run: echo "Build and release version " ${{ env.GitVersion_SemVer }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -66,8 +77,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: latest-${{ matrix.os }}
-          release_name: Release ${{ matrix.os }}
+          tag_name: ${{ matrix.os }}
+          release_name: ${{ matrix.os }}
           draft: true
           prerelease: false
 
@@ -79,7 +90,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./release.zip
-          asset_name: release_on_${{ matrix.os }}.zip
+          asset_name: ${{ matrix.os }}.zip
           asset_content_type: application/zip
 
       - name: Upload release to S3
