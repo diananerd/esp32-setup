@@ -53,10 +53,7 @@ jobs:
         run: npm install
 
       - name: Create env file
-        run: echo  "VITE_FIRMWARE_URL=${{ env.VITE_FIRMWARE_URL }}" > .env
-
-      - name: Show env file
-        run: echo .env
+        run: echo  "VITE_FIRMWARE_URL=${{ vars.VITE_FIRMWARE_URL }}" > .env
 
       - name: Build Release Files
         run: npm run build; npm run electron:build
