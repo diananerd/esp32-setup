@@ -80,8 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ matrix.os }}
-          release_name: ${{ matrix.os }}
+          tag_name: ${{ env.GitVersion_SemVer }}
+          release_name: ${{ matrix.os }} ${{ env.GitVersion_SemVer }}
           draft: true
           prerelease: false
 
