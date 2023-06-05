@@ -82,7 +82,7 @@ jobs:
         with:
           tag_name: ${{ matrix.os }}-${{ env.GitVersion_SemVer }}
           release_name: ${{ matrix.os }} ${{ env.GitVersion_SemVer }}
-          draft: false
+          draft: true
           prerelease: false
 
       - name: Upload Release Asset

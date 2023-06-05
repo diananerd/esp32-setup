@@ -8,7 +8,7 @@
             <h2>Configurar conexión</h2>
             <p>Selecciona una red e ingresa la contraseña para conectar tu estación terrestre a internet.</p>
             <select v-model="network">
-                <option v-for="n in networksFiltered" :key="n" :value="n">
+                <option v-for="n in networks" :key="n" :value="n">
                     {{ n }}
                 </option>
             </select>
@@ -73,10 +73,6 @@ const networks = computed(() => {
     const str = lastSerial.value
     const list = [...str.matchAll(reg)].flat().map((e) => e.replace('\r', '')).filter((e) => !e.includes('\[0m')).map((e) => e.split(' ')[1])
     return list
-})
-
-const networksFiltered = computed(() => {
-    return networks.value?.filter((ssid) => ssid === 'PlatziSpaceProgram')
 })
 
 const connection = computed(() => {
