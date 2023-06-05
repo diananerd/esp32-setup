@@ -22,7 +22,7 @@ onMounted(() => {
     <p>Haz click en comenzar para iniciar el proceso de instalación del firmware.</p>
     <div class="flex">
       <RouterLink class="btn" to="/select-device">Comenzar</RouterLink>
-      <p class="badge">Firmware version v{{ firmwareVersion }}</p>
+      <p class="badge">Versión del firmware: v{{ firmwareVersion }}</p>
     </div>
   </div>
 </template>
