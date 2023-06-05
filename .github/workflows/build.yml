@@ -81,3 +81,30 @@ jobs:
           asset_path: ./release.zip
           asset_name: release_on_${{ matrix.os }}.zip
           asset_content_type: application/zip
+
+      - name: Upload release to S3
+        uses: hkusu/s3-upload-action@v2
+        id: upload-release-s3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-bucket: ${{ secrets.AWS_BUCKET }}
+          file-path: ${{ matrix.os }}.zip
+          bucket-root: /setup
+          destination-dir: ${{ env.GitVersion_SemVer }}
+
+      - name: Create version file
+        run: echo  "${{ env.GitVersion_SemVer }}" > version.txt
+
+      - name: Upload version file to S3
+        uses: hkusu/s3-upload-action@v2
+        id: upload-version-s3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-bucket: ${{ secrets.AWS_BUCKET }}
+          file-path: 'version.txt'
+          bucket-root: /setup
+          destination-dir: /
