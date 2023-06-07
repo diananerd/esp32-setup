@@ -93,7 +93,7 @@ jobs:
           name: release_url
 
       - name: Get Upload URL for UNIX
-        id: get_release_info
+        id: get_release_info_unix
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
           value=$(cat release_url/release_url.txt)
@@ -101,16 +101,23 @@ jobs:
         shell: bash
 
       - name: Get Upload URL for WINDOWS
-        id: get_release_info
+        id: get_release_info_windows
         if: matrix.os == 'windows-latest'
         run: |
           $value = Get-Content -Raw release_url/release_url.txt
           Write-Host "::set-output name=upload_url::$value"
         shell: pwsh
 
-      - name: Show recovered Upload URL
+      - name: Show recovered Upload URL - UNIX
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
-          echo "Release URL: ${{ steps.get_release_info.outputs.upload_url }}"
+          echo "Release URL: ${{ steps.get_release_info_unix.outputs.upload_url }}"
+
+
+      - name: Show recovered Upload URL - WINDOWS
+        if: matrix.os == 'windows-latest'
+        run: |
+          echo "Release URL: ${{ steps.get_release_info_windows.outputs.upload_url }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -142,13 +149,26 @@ jobs:
           fi
         shell: bash
 
-      - name: Upload Release Asset
-        id: upload-release-asset 
+      - name: Upload Release Asset - UNIX
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        id: upload-release-asset-unix
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+          upload_url: ${{ steps.get_release_info_unix.outputs.upload_url }}
+          asset_path: ./release.zip
+          asset_name: ${{ matrix.os }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset - WINDOWS
+        if: matrix.os == 'windows-latest'
+        id: upload-release-asset-windows
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release_info_windows.outputs.upload_url }}
           asset_path: ./release.zip
           asset_name: ${{ matrix.os }}.zip
           asset_content_type: application/zip
