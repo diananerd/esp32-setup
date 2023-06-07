@@ -17,8 +17,51 @@ on:
       - "!.github/workflows/build.yml"
 
 jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Unshallow repo
+        run: git fetch --unshallow --all
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0.9.7
+
+      - name: Show Version
+        run: echo "Release version " ${{ env.GitVersion_SemVer }}
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ matrix.os }}-${{ env.GitVersion_SemVer }}
+          release_name: ${{ matrix.os }} ${{ env.GitVersion_SemVer }}
+          draft: false
+          prerelease: false
+
+      - name: Output Release URL File
+        run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+      - name: Save Release URL File for publish
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_url
+          path: release_url.txt
+
   build:
-    name: Build and release
+    name: Build projects by OS
+    needs: [release]
     runs-on: ${{ matrix.os }}
     permissions: write-all
 
@@ -43,6 +86,11 @@ jobs:
 
       - name: Show Version
         run: echo "Build and release version > " ${{ env.GitVersion_SemVer }}
+
+      - name: Load Release URL File from release job
+        uses: actions/download-artifact@v1
+        with:
+          name: release_url
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -74,16 +122,15 @@ jobs:
           fi
         shell: bash
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Get Release File Name & Upload URL
+        id: get_release_info
+        run: |
+          echo ::set-output name=file_name::${REPOSITORY_NAME##*/}-${TAG_REF_NAME##*/v} # RepositoryName-v1.0.0
+          value=`cat release_url/release_url.txt`
+          echo ::set-output name=upload_url::$value
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ matrix.os }}-${{ env.GitVersion_SemVer }}
-          release_name: ${{ matrix.os }} ${{ env.GitVersion_SemVer }}
-          draft: true
-          prerelease: false
+          TAG_REF_NAME: ${{ github.ref }}
+          REPOSITORY_NAME: ${{ github.repository }}
 
       - name: Upload Release Asset
         id: upload-release-asset 

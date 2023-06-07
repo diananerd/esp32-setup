@@ -151,7 +151,11 @@ export function useEsptool() {
   }
 
   const loadFile = async () => {
-    firmwareVersion.value = await fetch(`${firmwareUrl}/version.txt`).then((res) => res.text())
+    firmwareVersion.value = await fetch(`${firmwareUrl}/version.txt`, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    }).then((res) => res.text())
     console.log('firmwareVersion: ', firmwareVersion.value)
     const firmwarePath = `${firmwareUrl}/${firmwareVersion.value}/ground-station.bin`
     console.log('loadFile', firmwarePath)
