@@ -98,19 +98,18 @@ jobs:
           if [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
               value=$(cat release_url/release_url.txt)
               echo "::set-output name=upload_url::$value"
-              echo "Release url:"
-              cat release_url/release_url.txt
           elif [[ "$RUNNER_OS" == "Windows" ]]; then
-              value=""
-              for /f %%A in ('type release_url/release_url.txt') do set "value=%%A"
-              echo "::set-output name=upload_url::!value!"
-              echo "Release url:"
-              type release_url/release_url.txt
+              $value = Get-Content -Raw release_url/release_url.txt
+              Write-Host "::set-output name=upload_url::$value"
           else
               echo "$RUNNER_OS not supported"
               exit 1
           fi
         shell: bash
+
+      - name: Show recovered Upload URL
+        run: |
+          echo "Release URL: ${{ steps.get_release_info.outputs.upload_url }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
