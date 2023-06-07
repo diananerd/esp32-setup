@@ -67,7 +67,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] # [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout Code
@@ -96,23 +96,24 @@ jobs:
         id: get_release_info
         run: |
           if [[ "$RUNNER_OS" == "Linux" || "$RUNNER_OS" == "macOS" ]]; then
-              value=`cat release_url/release_url.txt`
-              echo ::set-output name=upload_url::$value
+              value=$(cat release_url/release_url.txt)
+              echo "::set-output name=upload_url::$value"
               echo "Release url:"
               cat release_url/release_url.txt
           elif [[ "$RUNNER_OS" == "Windows" ]]; then
               setlocal EnableDelayedExpansion
-              set "value="
+              value=""
               for /f "usebackq delims=" %%A in ("release_url/release_url.txt") do (
                   set "value=%%A"
               )
-              echo ::set-output name=upload_url::!value!
+              echo "::set-output name=upload_url::!value!"
               echo "Release url:"
               type release_url/release_url.txt
           else
               echo "$RUNNER_OS not supported"
               exit 1
           fi
+        shell: bash
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
