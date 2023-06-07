@@ -101,11 +101,8 @@ jobs:
               echo "Release url:"
               cat release_url/release_url.txt
           elif [[ "$RUNNER_OS" == "Windows" ]]; then
-              setlocal EnableDelayedExpansion
               value=""
-              for /f "usebackq delims=" %%A in ("release_url/release_url.txt") do (
-                  set "value=%%A"
-              )
+              for /f %%A in ('type release_url/release_url.txt') do set "value=%%A"
               echo "::set-output name=upload_url::!value!"
               echo "Release url:"
               type release_url/release_url.txt
