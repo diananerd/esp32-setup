@@ -1,4 +1,4 @@
-name: Build
+name: Build and publish release
 
 on:
   pull_request:
@@ -92,6 +92,14 @@ jobs:
         with:
           name: release_url
 
+      - name: Get Upload URL
+        id: get_release_info
+        run: |
+          value=`cat release_url/release_url.txt`
+          echo ::set-output name=upload_url::$value
+          echo "Release url:"
+          cat release_url/release_url.txt
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -121,16 +129,6 @@ jobs:
             exit 1
           fi
         shell: bash
-
-      - name: Get Release File Name & Upload URL
-        id: get_release_info
-        run: |
-          echo ::set-output name=file_name::${REPOSITORY_NAME##*/}-${TAG_REF_NAME##*/v} # RepositoryName-v1.0.0
-          value=`cat release_url/release_url.txt`
-          echo ::set-output name=upload_url::$value
-        env:
-          TAG_REF_NAME: ${{ github.ref }}
-          REPOSITORY_NAME: ${{ github.repository }}
 
       - name: Upload Release Asset
         id: upload-release-asset 
