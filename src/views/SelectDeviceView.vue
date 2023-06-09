@@ -2,10 +2,10 @@
     <div class="flex" v-if="!device">
         <div class="flex" v-if="!devicesFiltered.length">
             <img class="icon rotate" src="@/assets/sync.svg" alt="sync" />
-            <p class="badge">Buscando dispositivos compatibles</p>
+            <p class="badge">Buscando estación terrestre</p>
         </div>
         <div v-else>
-            <h2>Seleccionar dispositivo</h2>
+            <h2>Seleccionar puerto</h2>
             <p>Selecciona el puerto USB de tu estación terrestre.</p>
         </div>
         <button
@@ -19,7 +19,7 @@
     </div>
     <div class="flex" v-else>
         <img class="loader" src="@/assets/loading.svg" alt="loading" />
-        <p class="status">Conectando dispositivo</p>
+        <p class="status">Conectando estación</p>
     </div>
 </template>
 

@@ -1,12 +1,12 @@
 <template>
-    <h2>Actualizar firmware</h2>
-    <p>Por favor, no desconectes el dispositivo.</p>
+    <h2>Actualizando firmware</h2>
+    <p>Por favor, no desconectes la estación.</p>
     <div v-if="flashing" class="flex">
       <img class="icon" src="@/assets/alert.svg" alt="alert" />
       <div class="progress">
         <div class="progress-bar" :style="`width: ${progress}%`"></div>
       </div>
-      <p class="small">Programando dispositivo: {{ progress }}%</p>
+      <p class="small">Programando estación: {{ progress }}%</p>
     </div>
 </template>
 
@@ -58,7 +58,7 @@ onMounted(async () => {
   try {
     await flash()
   } catch (e) {
-    toError('Error de conexión', 'El dispositivo se desconectó inesperadamente')
+    toError('Error de conexión', 'La estación se desconectó inesperadamente')
   }
 })
 </script>
