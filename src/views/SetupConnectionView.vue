@@ -1,14 +1,14 @@
 <template>
     <div class="flex" v-if="!connected">
         <img class="icon" src="@/assets/fail.svg" alt="fail" />
-        <p class="status">Dispositivo no conectado</p>
+        <p class="status">Estación no conectada</p>
     </div>
     <form class="flex" @submit.prevent="connect" v-else-if="!connecting">
-        <div v-if="networks.length">
+        <div v-if="networksFiltered.length">
             <h2>Configurar conexión</h2>
             <p>Selecciona una red e ingresa la contraseña para conectar tu estación terrestre a internet.</p>
             <select v-model="network">
-                <option v-for="n in networks" :key="n" :value="n">
+                <option v-for="n in networksFiltered" :key="n" :value="n">
                     {{ n }}
                 </option>
             </select>
@@ -52,7 +52,8 @@ const {
   connected,
   reset,
   readSerial,
-  writeSerial
+  writeSerial,
+  stopSerial
 } = useEsptool()
 
 const prevSerial = ref('')
@@ -73,6 +74,10 @@ const networks = computed(() => {
     const str = lastSerial.value
     const list = [...str.matchAll(reg)].flat().map((e) => e.replace('\r', '')).filter((e) => !e.includes('\[0m')).map((e) => e.split(' ')[1])
     return list
+})
+
+const networksFiltered = computed(() => {
+    return networks.value?.filter((net) => !net.includes('wifi:'))
 })
 
 const connection = computed(() => {
@@ -110,6 +115,7 @@ const waitConnection = () => {
         setTimeout(waitConnection, waitConnectionTime)
     } else {
         connecting.value = false
+        stopSerial()
         router.push('/connection-success')
     }
 }

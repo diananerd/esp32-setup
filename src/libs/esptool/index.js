@@ -144,6 +144,14 @@ export function useEsptool() {
     }
   }
 
+  const stopSerial = async () => {
+    console.log('stopSerial');
+    // enableReadSerial.value = false;
+    // serial.value = '';
+    await transport.value.disconnect();
+    await transport.value.waitForUnlock(1500);
+  }
+
   const writeSerial = async (msg) => {
     console.log('writeSerial', msg)
     const message = new Uint8Array(Buffer.from(msg))
@@ -191,6 +199,7 @@ export function useEsptool() {
     flash,
     reset,
     readSerial,
+    stopSerial,
     writeSerial
   }
 }
