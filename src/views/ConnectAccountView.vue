@@ -85,7 +85,7 @@ const fetchCode = () => {
     lastSerial.value = serial.value.replace(prevSerial.value, '')
     prevSerial.value = serial.value
     console.log('last serial', lastSerial.value)
-    if (!access_token.value || error.value !== 'denied' || ) {
+    if (!access_token.value || error.value !== 'denied' || error.value !== 'expired') {
         setTimeout(fetchCode, 2500)
     } else if (error.value === 'denied') {
         toError('Operación cancelada', 'No se autorizó esta acción')
