@@ -44,6 +44,11 @@ const router = createRouter({
       component: () => import('../views/ConnectAccountView.vue')
     },
     {
+      path: '/success-sync',
+      name: 'success-sync',
+      component: () => import('../views/SuccessSyncView.vue')
+    },
+    {
       path: '/error',
       name: 'error',
       component: () => import('../views/ErrorView.vue')
