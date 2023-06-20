@@ -6,8 +6,7 @@
         <p class="status" style="margin-bottom: 24px;" v-if="error">
             {{ message }}
         </p>
-        <!-- <a v-if="verification_uri" class="btn" target="_blank" :href="verification_uri">Agregar</a> -->
-        <a v-if="code" class="btn" target="_blank" :href="`https://space.platzi.com/stations/add/${code}`">Agregar</a>
+        <a v-if="verification_uri" class="btn" target="_blank" :href="verification_uri">Agregar</a>
     </div>
 </template>
 
