@@ -1,7 +1,12 @@
 <script setup>
-import { onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { getInfo } from '@/libs/electron'
 import { useEsptool } from '@/libs/esptool'
+
+let appInfo = reactive({
+  info: {}
+})
 
 const {
   firmwareVersion,
@@ -10,6 +15,7 @@ const {
 
 onMounted(() => {
   loadFile()
+  appInfo.info = getInfo()
 })
 </script>
 

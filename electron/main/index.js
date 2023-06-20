@@ -166,6 +166,13 @@ ipcMain.handle('open-win', (_, arg) => {
   }
 })
 
+ipcMain.on('get-app-info', (e) => {
+  e.returnValue = {
+    appName: app.getName(),
+    appVersion: app.getVersion()
+  }
+})
+
 ipcMain.on('exit', () => {
   app.quit()
   process.exit(0)
