@@ -38,7 +38,7 @@ const {
 } = useEsptool()
 
 const devicesFiltered = computed(() => {
-    return devices.value?.filter((device) => device?.vendorId === '6790')
+    return devices.value?.filter((device) => device?.vendorId === '6790' || device?.vendorId === '4292')
 })
 
 watch(
