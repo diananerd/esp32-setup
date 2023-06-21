@@ -14,7 +14,7 @@
             @click="selectPort(device.portId)"
         >
             {{ device.displayName }} ({{ device.portName }})
-            <span v-if="device.vendorId === '6790'">✨</span>
+            <span v-if="device.vendorId === '6790' || device.vendorId === '4292'">✨</span>
         </button>
     </div>
     <div class="flex" v-else>
