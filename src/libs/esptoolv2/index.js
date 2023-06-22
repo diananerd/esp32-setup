@@ -14,7 +14,6 @@ let connected = ref(false)
 let progress = ref(0)
 let serial = ref('')
 let serialTask = null
-
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -152,8 +151,7 @@ export function useEsptool() {
   const flash = async () => {
     console.log('flash device')
     flashing.value = true
-    await transport.disconnect()
-    connected.value = false
+    await disconnect()
     await connect()
     await connectLoader()
     if (esploader) {
@@ -172,10 +170,6 @@ export function useEsptool() {
         updateProgress
       )
       await esploader.flash_finish()
-      // await transport.disconnect()
-      // connected.value = false
-      // connect()
-      startSerial()
       reset()
       flashing.value = false
       progress.value = 0
@@ -201,7 +195,7 @@ export function useEsptool() {
   }
 
   const startSerial = async () => {
-    console.log('readSerial', transport)
+    // console.log('readSerial', transport)
     let buff = new Uint8Array()
     try {
       while (transport) {
@@ -213,23 +207,23 @@ export function useEsptool() {
           buff = tmp
           serial.value += Buffer.from(buff).toString()
         } else {
-          console.log('end of read')
+          // console.log('end of read')
           break;
         }
       }
     } catch (e) {
-      console.log('end readSerial')
+      // console.log('end readSerial')
     }
   }
 
   const startSerialTask = () => {
-    console.log('program readSerial')
+    // console.log('program readSerial')
     serialTask = setInterval(() => {
       if (flashing.value) {
-        console.log('skip startSerial')
+        // console.log('skip startSerial')
         return
       }
-      console.log('recall startSerial')
+      // console.log('recall startSerial')
       startSerial()
     }, 1500)
   }
