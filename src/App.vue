@@ -53,13 +53,13 @@ const sendCommand = (e) => {
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
       </form>
       <div class="group">
-        <button v-if="!connected" class="action" @click="connect">connect</button>
+        <!-- <button v-if="!connected" class="action" @click="connect">connect</button>
         <button v-if="!connected" class="action" @click="connectLoader">connect loader</button>
-        <button v-else class="action" @click="disconnect">disconnect</button>
+        <button v-else class="action" @click="disconnect">disconnect</button> -->
         <button class="action" @click="flash">flash</button>
         <button class="action" @click="reset">reset</button>
-        <button class="action" @click="start">start</button>
-        <button class="action" @click="stopSerialTask">stop</button>
+        <!-- <button class="action" @click="start">start</button>
+        <button class="action" @click="stopSerialTask">stop</button> -->
         <button class="action" @click="cleanSerial">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
