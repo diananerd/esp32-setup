@@ -43,17 +43,17 @@ const sendCommand = (e) => {
   <div class="debug">
     <button class="toggler" @click="showDebug = !showDebug"></button>
     <textarea readonly v-if="showDebug" ref="serialEl">{{ text }}</textarea>
-    <form @submit.prevent="sendCommand" v-if="showDebug" class="controls">
-      <div class="group">
+    <div v-if="showDebug" class="controls">
+      <form @submit.prevent="sendCommand" class="group">
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
-      </div>
+      </form>
       <div class="group">
         <button class="action" @click="flashDevice">flash</button>
         <button class="action" @click="resetTerminal">reset</button>
         <button class="action" @click="clearText">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
