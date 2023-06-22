@@ -225,7 +225,7 @@ export function useEsptool() {
       }
       // console.log('recall startSerial')
       startSerial()
-    }, 600)
+    }, 500)
   }
 
   const stopSerialTask = () => clearInterval(serialTask)
