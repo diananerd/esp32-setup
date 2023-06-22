@@ -218,7 +218,7 @@ export function useEsptool() {
         }
       }
     } catch (e) {
-      console.log('fail on readSerial')
+      console.log('end readSerial')
     }
   }
 
