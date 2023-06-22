@@ -199,7 +199,7 @@ export function useEsptool() {
     let buff = new Uint8Array()
     try {
       while (transport) {
-        let buf = await transport.rawRead(500);
+        let buf = await transport.rawRead(250);
         if (typeof buf !== 'undefined' && buf.byteLength) {
           let tmp = new Uint8Array(buff.byteLength + buf.byteLength);
           tmp.set(new Uint8Array(buff), 0);
@@ -225,7 +225,7 @@ export function useEsptool() {
       }
       // console.log('recall startSerial')
       startSerial()
-    }, 1500)
+    }, 500)
   }
 
   const stopSerialTask = () => clearInterval(serialTask)
