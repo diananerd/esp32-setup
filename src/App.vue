@@ -21,11 +21,17 @@ watch(() => text.value, () => {
   immediate: true
 })
 
+const flashDevice = () => {
+  console.log('flashDevice')
+}
+
 const resetTerminal = () => {
+  console.log('resetTerminal')
   clearText()
 }
 
 const sendCommand = (e) => {
+  console.log('sendCommand', command.value)
   command.value = ''
 }
 </script>
@@ -36,12 +42,13 @@ const sendCommand = (e) => {
   </div>
   <div class="debug">
     <button class="toggler" @click="showDebug = !showDebug"></button>
-    <textarea v-if="showDebug" ref="serialEl">{{ text }}</textarea>
+    <textarea readonly v-if="showDebug" ref="serialEl">{{ text }}</textarea>
     <form @submit.prevent="sendCommand" v-if="showDebug" class="controls">
       <div class="group">
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
       </div>
       <div class="group">
+        <button class="action" @click="flashDevice">flash</button>
         <button class="action" @click="resetTerminal">reset</button>
         <button class="action" @click="clearText">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
@@ -93,6 +100,7 @@ textarea {
   min-height: 240px;
   margin: 0;
   padding: 4px;
+  resize: none;
   overflow-y: scroll;
   color: white;
   background-color: #202020;
