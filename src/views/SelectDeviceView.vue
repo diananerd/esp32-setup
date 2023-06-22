@@ -26,12 +26,12 @@
 <script setup>
 import { onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useEsptool } from '@/libs/esptool'
+import { useEsptool } from '@/libs/esptoolv2'
 const router = useRouter()
 const {
-  chip,
   devices,
   device,
+  connected,
   selectPort,
   requestDevice,
   connect
@@ -42,7 +42,7 @@ const devicesFiltered = computed(() => {
 })
 
 watch(
-    () => chip.value,
+    () => connected.value,
     (c) => c !== '' ? router.push('/select-action') : false
 )
 

@@ -1,17 +1,25 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
+import { useEsptool } from '@/libs/esptoolv2'
+
+const { serial, connected, connect, connectLoader, disconnect, startSerialTask, stopSerialTask, writeSerial, cleanSerial, flash, reset } = useEsptool()
+
 const showDebug = ref(false)
 const serialEl = ref(null)
 const text = ref('')
 const command = ref('')
 const autoscroll = ref(true)
 
-const clearText = () => text.value = ''
-
 const scrollToBottom = (t) => {
   t.scrollTop = t.scrollHeight
 };
+
+watch(() => serial.value, (val) => {
+  text.value = val
+}, {
+  immediate: true
+})
 
 watch(() => text.value, () => {
   if (serialEl.value && autoscroll.value) {
@@ -21,17 +29,14 @@ watch(() => text.value, () => {
   immediate: true
 })
 
-const flashDevice = () => {
-  console.log('flashDevice')
-}
-
-const resetTerminal = () => {
-  console.log('resetTerminal')
-  clearText()
+const start = () => {
+  startSerialTask()
+  reset()
 }
 
 const sendCommand = (e) => {
   console.log('sendCommand', command.value)
+  writeSerial(command.value + '\n')
   command.value = ''
 }
 </script>
@@ -48,9 +53,14 @@ const sendCommand = (e) => {
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
       </form>
       <div class="group">
-        <button class="action" @click="flashDevice">flash</button>
-        <button class="action" @click="resetTerminal">reset</button>
-        <button class="action" @click="clearText">clear</button>
+        <button v-if="!connected" class="action" @click="connect">connect</button>
+        <button v-if="!connected" class="action" @click="connectLoader">connect loader</button>
+        <button v-else class="action" @click="disconnect">disconnect</button>
+        <button class="action" @click="flash">flash</button>
+        <button class="action" @click="reset">reset</button>
+        <button class="action" @click="start">start</button>
+        <button class="action" @click="stopSerialTask">stop</button>
+        <button class="action" @click="cleanSerial">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
     </div>

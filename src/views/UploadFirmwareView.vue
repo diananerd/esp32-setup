@@ -31,7 +31,7 @@
 <script setup>
 import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useEsptool } from '@/libs/esptool'
+import { useEsptool } from '@/libs/esptoolv2'
 
 const router = useRouter()
 
