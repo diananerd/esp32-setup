@@ -11,11 +11,8 @@ const {
   syncSuccess,
   syncError,
   writeSerial,
-  cleanSerial,
   flash,
-  reset,
   findNetworks,
-  join,
   sync,
   clear
 } = useEsptool()
@@ -59,9 +56,9 @@ const sendCommand = (e) => {
     <button class="toggler" @click="showDebug = !showDebug"></button>
     <textarea readonly v-if="showDebug" ref="serialEl">{{ text }}</textarea>
     <div v-if="showDebug" class="controls">
-      <!-- <form @submit.prevent="sendCommand" class="group">
+      <form @submit.prevent="sendCommand" class="group">
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
-      </form> -->
+      </form>
       <div class="group">
         <p>Networks: {{ networks.length }}</p>
         <p v-if="isWiFiConnected">WiFi</p>
