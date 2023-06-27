@@ -272,6 +272,7 @@ export function useEsptool() {
     clearInterval(findNetworksTask)
     flashing.value = true
     await disconnect()
+    await sleep(2500)
     await connect()
     await connectLoader()
     if (esploader) {
@@ -382,8 +383,17 @@ export function useEsptool() {
     writeSerial(`join ${ssid} ${pass}`)
   }
 
+  const stopJoin = () => {
+    clearInterval(findNetworksTask)
+  }
+
   const sync = () => {
     writeSerial(`sync`)
+  }
+
+  const clear = () => {
+    writeSerial('clear')
+    setTimeout(() => reset(), 1500)
   }
 
   return {
@@ -420,6 +430,8 @@ export function useEsptool() {
     writeSerial,
     findNetworks,
     join,
-    sync
+    stopJoin,
+    sync,
+    clear
   }
 }

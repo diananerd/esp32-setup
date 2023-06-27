@@ -16,7 +16,8 @@ const {
   reset,
   findNetworks,
   join,
-  sync
+  sync,
+  clear
 } = useEsptool()
 
 const showDebug = ref(false)
@@ -76,10 +77,9 @@ const sendCommand = (e) => {
         <button class="action" @click="findNetworks">networks</button>
         <button class="action" @click="join('HostalStella01', 'Stella2019')">join</button>
         <button class="action" @click="sync">sync</button>
-        <button class="action" @click="reset">reset</button>
         <!-- <button class="action" @click="start">start</button>
         <button class="action" @click="stopSerialTask">stop</button> -->
-        <button class="action" @click="cleanSerial">clear</button>
+        <button class="action" @click="clear">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
     </div>
