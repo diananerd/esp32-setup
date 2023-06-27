@@ -3,7 +3,21 @@ import { ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useEsptool } from '@/libs/esptoolv2'
 
-const { serial, connected, connect, connectLoader, disconnect, startSerialTask, stopSerialTask, writeSerial, cleanSerial, flash, reset } = useEsptool()
+const {
+  serial,
+  networks,
+  isWiFiConnected,
+  verificationUri,
+  syncSuccess,
+  syncError,
+  writeSerial,
+  cleanSerial,
+  flash,
+  reset,
+  findNetworks,
+  join,
+  sync
+} = useEsptool()
 
 const showDebug = ref(false)
 const serialEl = ref(null)
@@ -29,14 +43,9 @@ watch(() => text.value, () => {
   immediate: true
 })
 
-const start = () => {
-  startSerialTask()
-  reset()
-}
-
 const sendCommand = (e) => {
   console.log('sendCommand', command.value)
-  writeSerial(command.value + '\n')
+  writeSerial(command.value)
   command.value = ''
 }
 </script>
@@ -49,14 +58,24 @@ const sendCommand = (e) => {
     <button class="toggler" @click="showDebug = !showDebug"></button>
     <textarea readonly v-if="showDebug" ref="serialEl">{{ text }}</textarea>
     <div v-if="showDebug" class="controls">
-      <form @submit.prevent="sendCommand" class="group">
+      <!-- <form @submit.prevent="sendCommand" class="group">
         <label>Command&nbsp;&nbsp;<input type="text" v-model="command" placeholder="Input command and use Enter..." /></label>
-      </form>
+      </form> -->
+      <div class="group">
+        <p>Networks: {{ networks.length }}</p>
+        <p v-if="isWiFiConnected">WiFi</p>
+        <p v-if="verificationUri.length">Show code</p>
+        <p v-if="syncSuccess">Success</p>
+        <p v-if="syncError.error">{{ syncError.error }}</p>
+      </div>
       <div class="group">
         <!-- <button v-if="!connected" class="action" @click="connect">connect</button>
         <button v-if="!connected" class="action" @click="connectLoader">connect loader</button>
         <button v-else class="action" @click="disconnect">disconnect</button> -->
         <button class="action" @click="flash">flash</button>
+        <button class="action" @click="findNetworks">networks</button>
+        <button class="action" @click="join('HostalStella01', 'Stella2019')">join</button>
+        <button class="action" @click="sync">sync</button>
         <button class="action" @click="reset">reset</button>
         <!-- <button class="action" @click="start">start</button>
         <button class="action" @click="stopSerialTask">stop</button> -->
@@ -124,6 +143,10 @@ textarea {
 }
 .group {
   display: flex;
+}
+.group > p {
+  margin: auto 0;
+  padding-left: 14px;
 }
 label {
   display: flex;

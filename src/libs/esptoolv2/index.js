@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { ESPLoader, Transport } from 'esptool-js'
 
 const firmwareUrl = import.meta.env.VITE_FIRMWARE_URL
@@ -14,6 +14,125 @@ let connected = ref(false)
 let progress = ref(0)
 let serial = ref('')
 let serialTask = null
+let networks = ref([])
+let network = ref('')
+let isWiFiConnected = ref(false)
+let verificationUri = ref('')
+let syncSuccess = ref(false)
+let syncError = reactive({ error: '', message: '' })
+let findNetworksTask = null
+
+const serialList = computed(() => {
+  return serial.value
+    .split('\n')
+    // .map(e => e.split('\r'))
+    // .flat()
+    // .map(e =>
+    //   e
+    //   .replace('\u001b[0;32m', '')
+    //   .replace('\u001b[0;33m', '')
+    //   .replace('\u001b[0m', '')
+    //   .replace('[0;\u001b[5n', '')
+    //   .replace('\u001b', '')
+    //   .replace('\r\r', '')
+    //   .replace('\r', '')
+    // )
+    // .filter(e => e)
+    // .filter(e => e !== 'I')
+    // .filter(e => !e.startsWith('I '))
+    // .filter(e => !e.startsWith('W '))
+    // .filter(e => !e.startsWith('> '))
+    // .filter((e, i, l) => {
+    //   const prev = i > 0 ? l[i-1] : ''
+    //   // console.log(`${i}) current: ${e}, previous: ${prev}`)
+    //   return e !== prev && !e.includes(prev)
+    // })
+    // .filter((e, i, l) => i > 0 ? e !== l[i-1] && !e.includes(l[i-1]) : false)
+    // .filter((e, i, l) => i > 0 ? !e.includes(l[i-1]) : true)
+})
+
+const toJSON = (obj) => {
+  try {
+    return JSON.parse(obj)
+  } catch (e) {
+    return {}
+  }
+}
+
+watch(() => serialList.value, (list, old) => {
+  if (list.length && list !== old) {
+    let _nets = new Set()
+    const isNetwork = /^\d+\)\s.*\r$/gm
+    const isDeviceCode = /^device_code:\s.*\r$/gm
+    list.map(el => {
+      if (el.match(isNetwork)) {
+        // list networks
+        const [_, n] = el.split(') ')
+        const net = n.replace('\r', '')
+        if (net) _nets.add(net)
+        networks.value = Array.from(_nets)
+      } else if (el === 'WiFi Connected\r') {
+        isWiFiConnected.value = true
+        networks.value = []
+      } else if (el.match(isDeviceCode) && el.includes('verification_uri')) {
+        // show code
+        syncSuccess.value = false
+        const [_, str] = el.split(': ')
+        str.replace('\r', '')
+        const obj = toJSON(str)
+        console.log(obj)
+        if ('verification_uri' in obj) {
+          verificationUri.value = obj['verification_uri']
+          console.log('verification_uri', verificationUri.value)
+        } else {
+          console.log('verification_uri not found')
+        }
+      } else if (el.match(isDeviceCode) && el.includes('access_token')) {
+        // sync success
+        const [_, str] = el.split(': ')
+        str.replace('\r', '')
+        const obj = toJSON(str)
+        console.log(obj)
+        if ('access_token' in obj) {
+          syncSuccess.value = true
+          verificationUri.value = ''
+          console.log('access_token', syncSuccess.value)
+        } else {
+          console.log('access_token not found')
+        }
+      } else if (el.match(isDeviceCode) && el.includes('error')) {
+        // sync error
+        const [_, str] = el.split(': ')
+        str.replace('\r', '')
+        const obj = toJSON(str)
+        console.log(obj)
+        if ('error' in obj) {
+          if (obj.error === 'denied') {
+            console.log('Denied error!')
+            syncError.error = obj.error
+            syncError.message = obj.message
+            verificationUri.value = ''
+          } else if (obj.error === 'expired') {
+            console.log('Expired error!')
+            syncError.error = obj.error
+            syncError.message = obj.message
+            verificationUri.value = ''
+          } else if (obj.error === 'validation_error') {
+            console.log('Validation error!')
+            syncError.error = obj.error
+            syncError.message = obj.message
+            verificationUri.value = ''
+          }
+        } else {
+          console.log('error not found')
+        }
+      }
+    })
+  }
+}, {
+  immediate: true
+})
+
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -150,6 +269,7 @@ export function useEsptool() {
 
   const flash = async () => {
     console.log('flash device')
+    clearInterval(findNetworksTask)
     flashing.value = true
     await disconnect()
     await connect()
@@ -205,7 +325,7 @@ export function useEsptool() {
           tmp.set(new Uint8Array(buff), 0);
           tmp.set(new Uint8Array(buf), buff.byteLength);
           buff = tmp
-          serial.value += Buffer.from(buff).toString()
+          serial.value = Buffer.from(buff).toString()
         } else {
           // console.log('end of read')
           break;
@@ -245,9 +365,25 @@ export function useEsptool() {
 
   const writeSerial = async (msg) => {
     console.log('writeSerial', msg)
-    const message = new Uint8Array(Buffer.from(msg))
+    const message = new Uint8Array(Buffer.from(msg  + '\n'))
     await transport.write(message)
     // startSerial()
+  }
+
+  const findNetworks = () => {
+    findNetworksTask = setInterval(() => {
+      writeSerial('networks')
+      isWiFiConnected.value = false
+    }, 2500)
+  }
+
+  const join = (ssid, pass = '') => {
+    clearInterval(findNetworksTask)
+    writeSerial(`join ${ssid} ${pass}`)
+  }
+
+  const sync = () => {
+    writeSerial(`sync`)
   }
 
   return {
@@ -258,7 +394,14 @@ export function useEsptool() {
     flashing,
     progress,
     serial,
+    serialList,
     firmwareVersion,
+    networks,
+    network,
+    isWiFiConnected,
+    verificationUri,
+    syncSuccess,
+    syncError,
     setDevices,
     addDevice,
     removeDevice,
@@ -274,6 +417,9 @@ export function useEsptool() {
     startSerialTask,
     stopSerialTask,
     disconnect,
-    writeSerial
+    writeSerial,
+    findNetworks,
+    join,
+    sync
   }
 }
