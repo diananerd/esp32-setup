@@ -70,7 +70,7 @@ const sendCommand = (e) => {
         <button class="action" @click="flash">flash</button>
         <button class="action" @click="findNetworks">networks</button>
         <button class="action" @click="sync">sync</button>
-        <button class="action" @click="clear">clear</button>
+        <button class="action" @click="clear">clear flash</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
     </div>
