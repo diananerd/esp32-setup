@@ -2,7 +2,7 @@
 import { reactive, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { getInfo } from '@/libs/electron'
-import { useEsptool } from '@/libs/esptool'
+import { useEsptool } from '@/libs/esptoolv2'
 
 let appInfo = reactive({
   info: {}

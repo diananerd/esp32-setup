@@ -1,5 +1,5 @@
-import { app, ipcRenderer } from 'electron'
-import { useEsptool } from '../esptool'
+import { ipcRenderer } from 'electron'
+import { useEsptool } from '../esptoolv2'
 const esptool = useEsptool()
 
 export const getInfo = () => {
