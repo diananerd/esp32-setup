@@ -70,15 +70,9 @@ const sendCommand = (e) => {
         <p v-if="syncError.error">{{ syncError.error }}</p>
       </div>
       <div class="group">
-        <!-- <button v-if="!connected" class="action" @click="connect">connect</button>
-        <button v-if="!connected" class="action" @click="connectLoader">connect loader</button>
-        <button v-else class="action" @click="disconnect">disconnect</button> -->
         <button class="action" @click="flash">flash</button>
         <button class="action" @click="findNetworks">networks</button>
-        <button class="action" @click="join('HostalStella01', 'Stella2019')">join</button>
         <button class="action" @click="sync">sync</button>
-        <!-- <button class="action" @click="start">start</button>
-        <button class="action" @click="stopSerialTask">stop</button> -->
         <button class="action" @click="clear">clear</button>
         <label><input type="checkbox" v-model="autoscroll" /> autoscroll</label>
       </div>
