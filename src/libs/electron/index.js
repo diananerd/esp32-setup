@@ -1,6 +1,10 @@
 import { ipcRenderer } from 'electron'
-import { useEsptool } from '../esptool'
+import { useEsptool } from '../esptoolv2'
 const esptool = useEsptool()
+
+export const getInfo = () => {
+  return ipcRenderer.sendSync('get-app-info')
+}
 
 export const exit = () => {
   ipcRenderer.send('exit')
