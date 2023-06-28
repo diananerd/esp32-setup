@@ -380,7 +380,7 @@ export function useEsptool() {
 
   const join = (ssid, pass = '') => {
     clearInterval(findNetworksTask)
-    writeSerial(`join ${ssid} ${pass}`)
+    writeSerial(`join "${ssid}" "${pass}"`)
   }
 
   const stopJoin = () => {
