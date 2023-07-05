@@ -254,7 +254,7 @@ export function useEsptool() {
       await esploader.write_flash(
         [
           {
-            address: 0x10000,
+            address: 0x0,
             data: file
           }
         ],
