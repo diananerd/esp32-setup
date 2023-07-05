@@ -23,32 +23,7 @@ let syncError = reactive({ error: '', message: '' })
 let findNetworksTask = null
 
 const serialList = computed(() => {
-  return serial.value
-    .split('\n')
-    // .map(e => e.split('\r'))
-    // .flat()
-    // .map(e =>
-    //   e
-    //   .replace('\u001b[0;32m', '')
-    //   .replace('\u001b[0;33m', '')
-    //   .replace('\u001b[0m', '')
-    //   .replace('[0;\u001b[5n', '')
-    //   .replace('\u001b', '')
-    //   .replace('\r\r', '')
-    //   .replace('\r', '')
-    // )
-    // .filter(e => e)
-    // .filter(e => e !== 'I')
-    // .filter(e => !e.startsWith('I '))
-    // .filter(e => !e.startsWith('W '))
-    // .filter(e => !e.startsWith('> '))
-    // .filter((e, i, l) => {
-    //   const prev = i > 0 ? l[i-1] : ''
-    //   // console.log(`${i}) current: ${e}, previous: ${prev}`)
-    //   return e !== prev && !e.includes(prev)
-    // })
-    // .filter((e, i, l) => i > 0 ? e !== l[i-1] && !e.includes(l[i-1]) : false)
-    // .filter((e, i, l) => i > 0 ? !e.includes(l[i-1]) : true)
+  return serial.value.split('\n')
 })
 
 const toJSON = (obj) => {
@@ -279,7 +254,7 @@ export function useEsptool() {
       await esploader.write_flash(
         [
           {
-            address: 0x10000,
+            address: 0x0,
             data: file
           }
         ],
