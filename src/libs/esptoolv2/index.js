@@ -142,7 +142,7 @@ export function useEsptool() {
       }
     }).then((res) => res.text())
     console.log('firmwareVersion: ', firmwareVersion.value)
-    const firmwarePath = `${firmwareUrl}/${firmwareVersion.value}/ground-station.bin`
+    const firmwarePath = `${firmwareUrl}/${firmwareVersion.value}/firmware.bin`
     console.log('loadFile', firmwarePath)
     const fileBlob = await fetch(firmwarePath).then((res) => res.blob())
     if (!fileBlob) return
