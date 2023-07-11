@@ -9,6 +9,11 @@ const router = createRouter({
       component: () => import('../views/StartView.vue')
     },
     {
+      path: '/select-board',
+      name: 'select-board',
+      component: () => import('../views/SelectBoardView.vue')
+    },
+    {
       path: '/select-device',
       name: 'select-device',
       component: () => import('../views/SelectDeviceView.vue')

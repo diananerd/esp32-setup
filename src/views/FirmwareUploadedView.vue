@@ -3,7 +3,7 @@
     <p>Se actualizó el firmware correctamente, ahora es necesario configurar la conexión a internet.</p>
     <div class="flex">
         <img class="icon" src="@/assets/success.svg" alt="success" />
-        <RouterLink class="btn" to="/setup-connection">Configurar conexión</RouterLink>
+        <RouterLink class="btn" to="/select-board">Configurar hardware</RouterLink>
     </div>
     </template>
 
