@@ -358,7 +358,7 @@ export function useEsptool() {
   const toBoardCommand = (config) => {
     return Object.keys(config).reduce((command, key) => {
         const value = typeof config[key] === 'number' ? config[key] : `"${config[key]}"`
-        return command += ` -${key} ${value}`
+        return command += ` --${key} ${value}`
     }, 'board')
   }
 
