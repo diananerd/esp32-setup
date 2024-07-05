@@ -1,35 +1,28 @@
-# groundstationinstaller
+# Ground Station Firmware Uploader
+This is the firmware uploader for the PlatziSat-1 Ground Station.
+It is built using Vue + Vite + Electron.
 
-This template should help get you started developing with Vue 3 in Vite.
+See the oficial build at [Platzi Space Program Site](https://platzi.com/space/). It is necessary to have a platzi account to access the full version of the site and the control panel.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
+## Install dependencies
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+> [!IMPORTANT]
+> For security reasons, electron not allowed to use serial communication in development mode, so you need to run a production build to test the app. If you run this project in developer mode, simply fails.
 
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
+### Compile and run a production build
 ```sh
 npm run build
+npm run electron:start
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
-
 ```sh
 npm run lint
 ```
+
+## Credits
+Software and Tools by [Diana Nerd](https://github.com/diananerd).</br>
+Built for the Platzi Space Program by [Platzi](https://platzi.com/).
