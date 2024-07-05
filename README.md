@@ -2,7 +2,7 @@
 This is the firmware uploader for the PlatziSat-1 Ground Station.
 It is built using Vue + Vite + Electron.
 
-See the oficial build at [Platzi Space Program Site](https://platzi.com/space/). Need a Platzi account to access to the full site and the ground station control panel.
+See the oficial build at [Platzi Space Program Site](https://platzi.com/space/). It is necessary to have a platzi account to access the full version of the site and the control panel.
 
 ## Install dependencies
 ```sh
