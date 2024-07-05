@@ -2,6 +2,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import { ESPLoader, Transport } from 'esptool-js'
 
 const firmwareUrl = import.meta.env.VITE_FIRMWARE_URL
+const boardsUrl = import.meta.env.VITE_BOARDS_URL
 let firmwareVersion = ref('')
 let devices = ref([])
 let device = ref(null)
@@ -153,6 +154,14 @@ export function useEsptool() {
       file = e.target.result
     }
     reader.readAsBinaryString(fileBlob)
+  }
+
+  const getBoardConfigs = async () => {
+    return fetch(boardsUrl, {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    }).then((res) => res.json())
   }
 
   const setDevices = async (ports) => {
@@ -346,6 +355,19 @@ export function useEsptool() {
     // startSerial()
   }
 
+  const toBoardCommand = (config) => {
+    return Object.keys(config).reduce((command, key) => {
+        const value = typeof config[key] === 'number' ? config[key] : `"${config[key]}"`
+        return command += ` --${key} ${value}`
+    }, 'board')
+  }
+
+  const setBoardConfig = (config) => {
+    const command = toBoardCommand(config)
+    writeSerial(command)
+    setTimeout(() => reset(), 1500)
+  }
+
   const findNetworks = () => {
     findNetworksTask = setInterval(() => {
       writeSerial('networks')
@@ -403,6 +425,8 @@ export function useEsptool() {
     stopSerialTask,
     disconnect,
     writeSerial,
+    getBoardConfigs,
+    setBoardConfig,
     findNetworks,
     join,
     stopJoin,
